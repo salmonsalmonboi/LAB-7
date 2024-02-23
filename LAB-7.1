@@ -1,0 +1,122 @@
+# LAB-7.1
+66543206088-7 นายศุภกร ศิริเมืองมูล
+
+#include <stdio.h>
+#include <string.h>
+
+struct studentNode {
+ 	char name[ 20 ] ;
+ 	int age ;
+ 	char sex ;
+ 	float gpa ;
+ 	struct studentNode *next ;
+} ;
+//------------------------mom class------------------------//
+class LinkedList {
+	//Properties
+ 	protected :
+ 		struct studentNode *start, **now ;
+ 		
+ 	//Methhods
+ 	public :
+  		LinkedList() ;
+  		~LinkedList() ; 
+  		void InsNode( char n[], int a, char s, float g ) ; 
+  		void DelNode() ; 
+  		void GoNext() ;
+  		virtual void ShowNode() ; 
+} ; //end class
+//--------------------------------------------------------//
+
+//---------child class------------//
+class NewList : public LinkedList {
+ 	public :
+  		void GoFirst() ; 
+  		virtual void ShowNode() ; 
+} ; //end class
+//------------------------------//
+
+LinkedList :: LinkedList() {
+	start = NULL ;
+	now = &start ;
+}//Constructor
+
+LinkedList :: ~LinkedList() {
+    struct studentNode *walk = start, *temp ;
+    while ( walk != NULL ) {
+        temp = walk ;
+        walk = walk->next ;
+        delete temp ; //destroy Instance
+    }
+}//Deconstructor
+
+void LinkedList :: InsNode( char n[], int a, char s, float g ) {
+    struct studentNode *walk = new studentNode;
+    strcpy(walk->name, n);
+    walk->age = a;
+    walk->sex = s;
+    walk->gpa = g;
+
+    walk->next = *now;
+    *now = walk;
+}//end InsNode function
+
+void LinkedList :: DelNode() {
+    if (*now != NULL) {
+        struct studentNode *temp = *now;
+        *now = temp->next;
+        delete temp;
+    }//end if
+}//end DelNode function
+
+void LinkedList :: GoNext () {	
+  	if ( *now != NULL ) {
+        now = &((*now)->next) ;
+    }//end if
+}//end GoNext function
+
+void LinkedList :: ShowNode () {
+	if( *now != NULL ) {
+		printf("%s %d %c %.2f\n", (*now)->name, (*now)->age, (*now)->sex, (*now)->gpa);	
+	}//end if
+}//end ShowNode function
+
+void NewList :: GoFirst () {	
+  		now = &start ;
+}//end GoFirst function
+
+void NewList :: ShowNode() {
+	struct studentNode *walk = start ;
+    while ( walk != NULL ) {
+        printf( "%s %d %c %.2f\n", walk->name, walk->age, walk->sex, walk->gpa ) ;
+        walk = walk->next ;
+	}//end while
+}//end ShowNode function
+
+int main() {
+ 	LinkedList listA ;
+ 	NewList listB ;
+ 	LinkedList *listC ;
+
+ 	listA.InsNode( "one", 1, 'A', 1.1 ) ;
+ 	listA.InsNode( "two", 2, 'B', 2.2 ) ;
+ 	listA.InsNode( "three", 3, 'C', 3.3 ) ;
+ 	listA.GoNext() ;
+ 	listA.ShowNode() ;
+
+ 	listB.InsNode( "four", 4, 'D', 4.4 ) ;
+ 	listB.InsNode( "five", 5, 'E', 5.5 ) ;
+ 	listB.InsNode( "six", 6, 'F', 6.6 ) ;
+ 	listB.GoNext() ;
+ 	listB.DelNode() ;
+ 	listB.ShowNode() ;
+
+ 	listC = &listA;
+ 	listC->GoNext() ;
+ 	listC->ShowNode() ;
+
+ 	listC = &listB ;
+ 	listC->ShowNode() ;
+
+ 	return 0 ;
+}//end function
